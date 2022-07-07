@@ -21,7 +21,16 @@
         <div class="col-sm">
             <br/>
             <div class="card shadow-lg p-3 mb-5 bg-body rounded">
-                Если пользователь зарегистрирован, то видит форму сокращения ссылок
+                {% if user.is_authenticated %}
+                    <form method="post">
+                    {% csrf_token %}
+                    {% bootstrap_form form layout='floating' %}
+                    {% bootstrap_button 'Сократить' type='submit' %}
+                    </form>
+                {% else %}
+                <p>Для того, чтобы сократить ссылку Вам необходимо <a href="{% url 'shortener:login_user' %}">Войти</a>
+                или <a href="{% url 'shortener:register_user' %}">Зарегистрироваться</a> </p>
+                {% endif %}
             </div>
         </div>
         <div class="col-sm"></div>

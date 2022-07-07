@@ -1,11 +1,23 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
+from .forms import UserURLForm
+from .models import UserURL
 
 
 def index(request):
-    return render(request, 'shortener/index.html')
+    if request.method == 'POST':
+        form = UserURLForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Ваша новая ссылка готова')
+            return redirect('shortener:url_list')
+    else:
+        form = UserURLForm(initial={'author': request.user.pk})
+    return render(request, 'shortener/index.html', {'form': form})
 
 
 def register_user(request):
@@ -44,3 +56,14 @@ def login_user(request):
             messages.error(request, 'Что-то пошло не так 2')
     form = AuthenticationForm
     return render(request, 'shortener/login.html', {'form': form})
+
+
+@login_required
+def url_list(request):
+    urls = UserURL.objects.filter(author=request.user.pk)
+    return render(request, 'shortener/url_list.html', {'urls': urls})
+
+
+def redirect_url(request, hash_url):
+    url = get_object_or_404(UserURL, hash_url=hash_url)
+    return redirect(url.full_url)
