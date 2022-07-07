@@ -1,0 +1,23 @@
+{% extends 'shortener/index.html' %}
+{% load django_bootstrap5 %}
+{% block title %}Вход{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-md-center">
+        <div class="col-sm"></div>
+        <div class="col-sm">
+            <br/>
+            <div class="card shadow-lg p-3 mb-5 bg-body rounded">
+                <form method="post">
+                    {% csrf_token %}
+                    {% bootstrap_form form layout='floating' %}
+                    <p class="text-center">
+                    {% bootstrap_button button_type="submit" content="Войти" %}
+                    </p>
+                </form>
+            </div>
+        </div>
+        <div class="col-sm"></div>
+    </div>
+</div>
+{% endblock %}
